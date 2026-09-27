@@ -26,6 +26,7 @@
 #include "ECS/Archetypes/CreatureArchetype.h"
 #include "ECS/Archetypes/FeatureArchetype.h"
 #include "ECS/Archetypes/FieldArchetype.h"
+#include "ECS/Archetypes/MistArchetype.h"
 #include "ECS/Archetypes/MobileObjectArchetype.h"
 #include "ECS/Archetypes/MobileStaticArchetype.h"
 #include "ECS/Archetypes/PlayerArchetype.h"
@@ -228,10 +229,13 @@ void FeatureScriptCommands::SetATownInfluenceMultiplier(int32_t townId, float mu
 	                    townId, multiplier);
 }
 
-void FeatureScriptCommands::CreateMist(glm::vec3 position, float param2, int32_t param3, float param4, float param5)
+void FeatureScriptCommands::CreateMist(glm::vec3 position, float scale, int32_t colour, float transparency, float heightRatio)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}, {}) not implemented.",
-	                    __FILE__, __LINE__, __func__, glm::to_string(position), param2, param3, param4, param5);
+	// The colour is passed as a single packed 0xAARRGGBB integer.
+	const auto argb = static_cast<uint32_t>(colour);
+	const glm::vec3 rgb = {static_cast<float>((argb >> 16) & 0xFFu) / 255.0f, static_cast<float>((argb >> 8) & 0xFFu) / 255.0f,
+	                       static_cast<float>(argb & 0xFFu) / 255.0f};
+	MistArchetype::Create(position, scale, rgb, transparency, heightRatio);
 }
 
 void FeatureScriptCommands::CreatePath(int32_t param1, int32_t param2, int32_t param3, int32_t param4)
