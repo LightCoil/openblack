@@ -69,8 +69,32 @@ if ($SkipBuild) {
     Ok 'build' 'skipped by -SkipBuild'
 }
 elseif (Run-Step 'build' {
-        & cmake --build $BuildDir --config Release 2>&1 | Tee-Object -FilePath (Join-Path $OutDir 'build.log')
-        if ($LASTEXITCODE -ne 0) { $false } else { $true }
+        # The exit code must be captured straight after the native command.
+        # Reading $LASTEXITCODE after the Tee-Object pipeline is unreliable:
+        # it kept the previous value and reported success for a failed build.
+        & cmake --build $BuildDir --config Release 2>&1 |
+            Tee-Object -FilePath (Join-Path $OutDir 'build.log') | Out-Null
+        $buildExit = $LASTEXITCODE
+
+        # Second line of defence: a compiler error in the log is a failure even
+        # if some wrapper managed to swallow the exit code.
+        $buildLog = Join-Path $OutDir 'build.log'
+        $logHasError = $false
+        if (Test-Path $buildLog) {
+            $logHasError = [bool](Select-String -Path $buildLog -Pattern 'error C\d+|error LNK\d+|FAILED:' -Quiet)
+        }
+
+        if ($buildExit -ne 0) {
+            Write-Host "cmake --build exited with $buildExit" -ForegroundColor Red
+            $false
+        }
+        elseif ($logHasError) {
+            Write-Host 'compiler errors found in build.log' -ForegroundColor Red
+            $false
+        }
+        else {
+            $true
+        }
     }) {
     Ok 'build' 'compilation succeeded'
 }
@@ -83,10 +107,19 @@ if (-not (Test-Path $exe)) {
     exit 1
 }
 
+if ($script:Failures.Count -gt 0) {
+    # A failed build makes every later stage meaningless, so stop here rather
+    # than reporting a cascade of derived failures.
+    Write-Host ''
+    Write-Host 'RESULT: FAILED' -ForegroundColor Red
+    $script:Failures | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
+    exit 1
+}
+
 # --- Stage 2: unit tests ----------------------------------------------------
 Run-Step 'tests' {
     & ctest --test-dir $BuildDir -C Release --output-on-failure 2>&1 |
-        Tee-Object -FilePath (Join-Path $OutDir 'ctest.log')
+        Tee-Object -FilePath (Join-Path $OutDir 'ctest.log') | Out-Null
     if ($LASTEXITCODE -ne 0) { $false } else { $true }
 } | Out-Null
 

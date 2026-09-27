@@ -44,9 +44,9 @@ public:
 	static void CreateTownCentreSpellIcon(int32_t, const std::string&);
 	static void CreateSpellIcon(glm::vec3 position, const std::string&, int32_t, int32_t, int32_t);
 	static void CreatePlannedSpellIcon(int32_t, glm::vec3 position, const std::string&, int32_t, int32_t, int32_t);
-	static void CreateVillager(glm::vec3, glm::vec3, const std::string&);
+	static void CreateVillager(glm::vec3 position, glm::vec3, const std::string& villagerType);
 	static void CreateTownVillager(int32_t townId, glm::vec3 position, const std::string& villagerType, int32_t age);
-	static void CreateSpecialTownVillager(int32_t, glm::vec3, int32_t, int32_t);
+	static void CreateSpecialTownVillager(int32_t specialVillagerIndex, glm::vec3 position, int32_t, int32_t);
 	static void CreateVillagerPos(glm::vec3, glm::vec3, const std::string&, int32_t);
 	static void CreateCitadel(glm::vec3 position, int32_t, const std::string&, int32_t, int32_t);
 	static void CreatePlannedCitadel(int32_t, glm::vec3 position, int32_t, const std::string&, int32_t, int32_t);
@@ -66,7 +66,7 @@ public:
 	static void CreateFishFarm(glm::vec3 position, int32_t);
 	static void CreateTownFishFarm(int32_t townId, glm::vec3 position, int32_t);
 	static void CreateFeature(glm::vec3 position, FeatureInfo type, int32_t rotation, int32_t scale, int32_t);
-	static void CreateFlowers(glm::vec3 position, int32_t, float, float);
+	static void CreateFlowers(glm::vec3 position, int32_t, float rotation, float scale);
 	static void CreateWallSection(glm::vec3 position, int32_t, int32_t, int32_t, int32_t);
 	static void CreatePlannedWallSection(glm::vec3 position, int32_t, int32_t, int32_t, int32_t);
 	static void CreatePitch(glm::vec3 position, int32_t, int32_t, int32_t, int32_t, int32_t);
@@ -110,9 +110,9 @@ public:
 	static void CreateBonfire(glm::vec3 position, float rotation, float param3, float scale);
 	static void CreateBase(glm::vec3 position, int32_t);
 	static void CreateNewFeature(glm::vec3 position, const std::string& type, int32_t rotation, int32_t scale, int32_t param5);
-	static void SetInteractDesire(float);
+	static void SetInteractDesire(float desire);
 	static void ToggleComputerPlayer(const std::string&, int32_t toggle);
-	static void SetComputerPlayerCreatureLike(const std::string&, const std::string&);
+	static void SetComputerPlayerCreatureLike(const std::string& player, const std::string& creature);
 	static void MultiplayerDebug(int32_t, int32_t);
 	static void CreateStreetLantern(glm::vec3 position, int32_t);
 	static void CreateStreetLight(glm::vec3 position);
@@ -126,9 +126,9 @@ public:
 	static void CreateNewTownField(int32_t townId, glm::vec3 position, FieldTypeInfo type, float rotation);
 	static void CreateSpellDispenser(int32_t, glm::vec3 position, const std::string&, const std::string&, float, float, float);
 	static void LoadComputerPlayerPersonality(int32_t, glm::vec3);
-	static void SetComputerPlayerPersonality(const std::string&, glm::vec3, float);
-	static void SetGlobalLandBalance(int32_t, float);
-	static void SetLandBalance(const std::string&, int32_t, float);
+	static void SetComputerPlayerPersonality(const std::string& personality, glm::vec3, float);
+	static void SetGlobalLandBalance(int32_t, float balance);
+	static void SetLandBalance(const std::string& tribe, int32_t, float balance);
 	static void CreateDrinkWaypoint(glm::vec3 position);
 	static void SetTownInfluenceMultiplier(float multiplier);
 	static void SetPlayerInfluenceMultiplier(float multiplier);
@@ -136,8 +136,8 @@ public:
 	static void StartGameMessage(const std::string& message, int32_t landNumber);
 	static void AddGameMessageLine(const std::string& message, int32_t landNumber);
 	static void EditLevel();
-	static void SetNighttime(float, float, float);
-	static void MakeLastObjectArtifact(int32_t, const std::string&, float);
+	static void SetNighttime(float startHour, float endHour, float transition);
+	static void MakeLastObjectArtifact(int32_t, const std::string& name, float);
 	static void SetLostTownScale(float scale);
 };
 
