@@ -67,6 +67,16 @@ constexpr std::unordered_map<std::string_view, C> makeLookup(std::array<std::str
 	return table;
 }
 
+/// Reports a script command that is accepted but has no gameplay effect yet.
+///
+/// Every deliberately unimplemented command routes through here so that a stub
+/// can never be silent: verify.ps1 counts these markers, so dropping a call
+/// would make the command look implemented.
+void LogUnimplementedScriptCommand(const char* function)
+{
+	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: script stub: {} is not implemented", function);
+}
+
 constexpr uint32_t k_DefaultVillagerAge = 20;
 
 const auto k_PlayerLookup = makeLookup<PlayerNames>(k_PlayerNamesStrs);
@@ -249,8 +259,7 @@ void FeatureScriptCommands::CreateMist(glm::vec3 position, float scale, int32_t 
 
 void FeatureScriptCommands::CreatePath(int32_t param1, int32_t param2, int32_t param3, int32_t param4)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}) not implemented.", __FILE__,
-	                    __LINE__, __func__, param1, param2, param3, param4);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateTown(int32_t townId, glm::vec3 position, const std::string& playerOwner,
@@ -366,22 +375,19 @@ void FeatureScriptCommands::CreateNewTownSpell(int32_t townId, const std::string
 
 void FeatureScriptCommands::CreateTownCentreSpellIcon(int32_t param1, const std::string& param2)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}) not implemented.", __FILE__, __LINE__,
-	                    __func__, param1, param2);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateSpellIcon(glm::vec3 position, const std::string& param2, int32_t param3, int32_t param4,
                                             int32_t param5)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}, {}) not implemented.",
-	                    __FILE__, __LINE__, __func__, glm::to_string(position), param2, param3, param4, param5);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreatePlannedSpellIcon(int32_t param1, glm::vec3 position, const std::string& param3,
                                                    int32_t param4, int32_t param5, int32_t param6)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}, {}, {}) not implemented.",
-	                    __FILE__, __LINE__, __func__, param1, glm::to_string(position), param3, param4, param5, param6);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateVillager(glm::vec3 position, glm::vec3 param2, const std::string& villagerType)
@@ -398,8 +404,7 @@ void FeatureScriptCommands::CreateTownVillager(int32_t townId, glm::vec3 positio
 
 void FeatureScriptCommands::CreateSpecialTownVillager(int32_t param1, glm::vec3 position, int32_t param3, int32_t param4)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}) not implemented.", __FILE__,
-	                    __LINE__, __func__, param1, glm::to_string(position), param3, param4);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateVillagerPos(glm::vec3 abodePosition, glm::vec3 position, const std::string& tribeAndNumber,
@@ -423,34 +428,29 @@ void FeatureScriptCommands::CreatePlannedCitadel(int32_t townId, glm::vec3 posit
 
 void FeatureScriptCommands::CreateCreaturePen([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWorshipSite([[maybe_unused]] glm::vec3 position, int32_t, const std::string&,
                                               const std::string&, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreatePlannedWorshipSite([[maybe_unused]] glm::vec3 position, int32_t, const std::string&,
                                                      const std::string&, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateAnimal([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateNewAnimal([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateForest([[maybe_unused]] int32_t forestId, [[maybe_unused]] glm::vec3 position)
@@ -492,14 +492,12 @@ void FeatureScriptCommands::CreateTownField(int32_t townId, glm::vec3 position, 
 
 void FeatureScriptCommands::CreateFishFarm([[maybe_unused]] glm::vec3 position, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateTownFishFarm([[maybe_unused]] int32_t townId, [[maybe_unused]] glm::vec3 position, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateFeature(glm::vec3 position, FeatureInfo type, int32_t rotation, int32_t scale, int32_t)
@@ -511,27 +509,22 @@ void FeatureScriptCommands::CreateFlowers([[maybe_unused]] glm::vec3 position, i
 {
 	// Deliberately left unimplemented: flowers are an ObjectType, not a
 	// FeatureInfo, and no flowers archetype exists to delegate to.
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"),
-	                    "LHScriptX: {}:{}: Function {} is not implemented: no flowers archetype exists.", __FILE__, __LINE__,
-	                    __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWallSection([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreatePlannedWallSection([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreatePitch([[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreatePot(glm::vec3 position, PotInfo type, int32_t /*unused*/, int32_t amount)
@@ -541,8 +534,7 @@ void FeatureScriptCommands::CreatePot(glm::vec3 position, PotInfo type, int32_t 
 
 void FeatureScriptCommands::CreateTownTemporaryPots(int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateMobileObject(glm::vec3 position, MobileObjectInfo type, int32_t rotation, int32_t scale)
@@ -563,26 +555,22 @@ void FeatureScriptCommands::CreateMobileUStatic(glm::vec3 position, MobileStatic
 
 void FeatureScriptCommands::CreateScaffold(int32_t, [[maybe_unused]] glm::vec3 position, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CountryChange([[maybe_unused]] glm::vec3 position, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::HeightChange([[maybe_unused]] glm::vec3 position, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateCreature(glm::vec3 position, int32_t param2, int32_t param3)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}) not implemented.", __FILE__,
-	                    __LINE__, __func__, glm::to_string(position), param2, param3);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateCreatureFromFile(const std::string& playerName, CreatureType creatureType,
@@ -603,8 +591,7 @@ void FeatureScriptCommands::CreateCreatureFromFile(const std::string& playerName
 
 void FeatureScriptCommands::CreateFlock(int32_t, glm::vec3, glm::vec3, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::LoadLandscape(const std::string& path)
@@ -619,8 +606,7 @@ void FeatureScriptCommands::Version([[maybe_unused]] float version)
 
 void FeatureScriptCommands::CreateArea([[maybe_unused]] glm::vec3 position, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::StartCameraPos(glm::vec3 focus)
@@ -635,8 +621,7 @@ void FeatureScriptCommands::StartCameraPos(glm::vec3 focus)
 
 void FeatureScriptCommands::FlyByFile([[maybe_unused]] const std::string& path)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::TownNeedsPos([[maybe_unused]] int32_t townId, [[maybe_unused]] glm::vec3 position)
@@ -655,8 +640,7 @@ void FeatureScriptCommands::TownNeedsPos([[maybe_unused]] int32_t townId, [[mayb
 
 void FeatureScriptCommands::CreateFurniture([[maybe_unused]] glm::vec3 position, int32_t, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateBigForest(glm::vec3 position, BigForestInfo type, float rotation, float scale)
@@ -672,45 +656,38 @@ void FeatureScriptCommands::CreateNewBigForest(glm::vec3 position, BigForestInfo
 
 void FeatureScriptCommands::CreateInfluenceRing([[maybe_unused]] glm::vec3 position, int32_t, float, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWeatherClimate(int32_t, int32_t, glm::vec3, float, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWeatherClimateRain(int32_t, float, int32_t, int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWeatherClimateTemp(int32_t, float, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWeatherClimateWind(int32_t, float, float, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateWeatherStorm(int32_t, glm::vec3, float, int32_t, const std::string&, const std::string&,
                                                const std::string&, float, glm::vec3)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::BrushSize(float, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateStream(int32_t streamId)
@@ -734,14 +711,12 @@ void FeatureScriptCommands::CreateStreamPoint(int32_t streamId, glm::vec3 positi
 
 void FeatureScriptCommands::CreateWaterfall([[maybe_unused]] glm::vec3 position)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateArena([[maybe_unused]] glm::vec3 position, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateFootpath(int32_t footpathId)
@@ -765,8 +740,7 @@ void FeatureScriptCommands::LinkFootpath(int32_t footpathId)
 {
 	// TODO(#482): The last MultiMapFixed created in this script is an implicit param
 	//             This Command adds the footpath to a list in a FootpathLink on the MultiMapFixed
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}) not implemented.", __FILE__, __LINE__,
-	                    __func__, footpathId);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateBonfire(glm::vec3 position, float rotation, [[maybe_unused]] float param3, float scale)
@@ -776,8 +750,7 @@ void FeatureScriptCommands::CreateBonfire(glm::vec3 position, float rotation, [[
 
 void FeatureScriptCommands::CreateBase([[maybe_unused]] glm::vec3 position, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateNewFeature(glm::vec3 position, const std::string& type, int32_t rotation, int32_t scale,
@@ -803,8 +776,7 @@ void FeatureScriptCommands::SetComputerPlayerCreatureLike(const std::string& pla
 
 void FeatureScriptCommands::MultiplayerDebug(int32_t, int32_t)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateStreetLantern([[maybe_unused]] glm::vec3 position, int32_t type)
@@ -833,20 +805,17 @@ void FeatureScriptCommands::SetLandNumber(int32_t number)
 
 void FeatureScriptCommands::CreateOneShotSpell([[maybe_unused]] glm::vec3 position, const std::string&)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateOneShotSpellPu([[maybe_unused]] glm::vec3 position, const std::string&)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::CreateFireFly([[maybe_unused]] glm::vec3 position)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::TownDesireBoost([[maybe_unused]] int32_t townId, const std::string& name, float boost)
@@ -884,14 +853,12 @@ void FeatureScriptCommands::CreateNewTownField(int32_t townId, glm::vec3 positio
 void FeatureScriptCommands::CreateSpellDispenser(int32_t, [[maybe_unused]] glm::vec3 position, const std::string&,
                                                  const std::string&, float, float, float)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::LoadComputerPlayerPersonality(int32_t, glm::vec3)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::SetComputerPlayerPersonality(const std::string& personality, glm::vec3, float)
@@ -914,8 +881,7 @@ void FeatureScriptCommands::SetLandBalance(const std::string& tribe, int32_t, fl
 
 void FeatureScriptCommands::CreateDrinkWaypoint([[maybe_unused]] glm::vec3 position)
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::SetTownInfluenceMultiplier([[maybe_unused]] float multiplier)
@@ -963,8 +929,7 @@ void FeatureScriptCommands::AddGameMessageLine([[maybe_unused]] const std::strin
 
 void FeatureScriptCommands::EditLevel()
 {
-	// SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {} not implemented.", __FILE__, __LINE__,
-	// __func__);
+	LogUnimplementedScriptCommand(__func__);
 }
 
 void FeatureScriptCommands::SetNighttime(float startHour, float endHour, float transition)

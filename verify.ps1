@@ -60,6 +60,9 @@ function Run-Step([string] $Stage, [scriptblock] $Action)
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
+# Expected script stubs, kept in their own file so the baseline stays reviewable.
+. (Join-Path $PSScriptRoot 'expected-stubs.ps1')
+
 $exe     = Join-Path $BuildDir 'bin\Release\openblack.exe'
 $logFile = Join-Path $OutDir 'land1.log'
 $shot    = Join-Path $OutDir 'land1.png'
@@ -161,19 +164,51 @@ else {
     Ok 'log' ("length {0} chars" -f $log.Length)
 }
 
-$stubCount   = ([regex]::Matches($log, 'not implemented')).Count
+$stubHits  = [regex]::Matches($log, 'script stub: (\w+) is not implemented')
+$actual    = @{}
+foreach ($m in $stubHits) {
+    $name = $m.Groups[1].Value
+    if (-not $actual.ContainsKey($name)) { $actual[$name] = 0 }
+    $actual[$name]++
+}
+
 $errorCount  = ([regex]::Matches($log, '\[error\]')).Count
 $warnCount   = ([regex]::Matches($log, '\[warning\]')).Count
 
-Write-Host ("INFO [log] not implemented: {0}" -f $stubCount)
-Write-Host ("INFO [log] errors:          {0}" -f $errorCount)
-Write-Host ("INFO [log] warnings:        {0}" -f $warnCount)
+Write-Host ("INFO [log] script stub calls: {0}" -f $stubHits.Count)
+Write-Host ("INFO [log] errors:            {0}" -f $errorCount)
+Write-Host ("INFO [log] warnings:          {0}" -f $warnCount)
 
-if ($stubCount -ne 0) {
-    Fail 'log' "unexpected 'not implemented' messages during Land1 load: $stubCount"
+# Every stub that actually ran must be a known, expected one. An unknown stub
+# means a new command lost its effect without anyone noticing.
+$unknown = @($actual.Keys | Where-Object { -not $script:ExpectedScriptStubs.ContainsKey($_) })
+if ($unknown.Count -gt 0) {
+    Fail 'log' ("unlisted script stub(s) executed: {0}" -f ($unknown -join ', '))
 }
-else {
-    Ok 'log' 'no stubs executed'
+
+# A listed stub must still fire the same number of times. A drop is treated as a
+# failure on purpose: that is the signature of the log no longer being written,
+# which is what made this check vacuous before.
+$drift = @()
+foreach ($name in $script:ExpectedScriptStubs.Keys) {
+    $want = $script:ExpectedScriptStubs[$name]
+    $got  = if ($actual.ContainsKey($name)) { $actual[$name] } else { 0 }
+    if ($got -ne $want) { $drift += ("{0}: expected {1}, got {2}" -f $name, $want, $got) }
+}
+if ($drift.Count -gt 0) {
+    foreach ($d in $drift) { Fail 'log' ("stub count drift -> {0}" -f $d) }
+}
+
+# A known-but-unused stub firing at all means a new call site appeared.
+$newlyUsed = @($script:KnownUnusedScriptStubs | Where-Object { $actual.ContainsKey($_) })
+if ($newlyUsed.Count -gt 0) {
+    Fail 'log' ("previously unused stub(s) now called: {0}" -f ($newlyUsed -join ', '))
+}
+
+$totalExpected = ($script:ExpectedScriptStubs.Values | Measure-Object -Sum).Sum
+if ($unknown.Count -eq 0 -and $drift.Count -eq 0 -and $newlyUsed.Count -eq 0) {
+    Ok 'log' ("known stubs only: {0} calls across {1} commands (of {2} total stubs)" -f `
+        $totalExpected, $script:ExpectedScriptStubs.Count, ($script:ExpectedScriptStubs.Count + $script:KnownUnusedScriptStubs.Count))
 }
 
 # --- Stage 5: screenshot ----------------------------------------------------
