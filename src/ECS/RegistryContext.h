@@ -24,5 +24,7 @@ struct RegistryContext
 	std::unordered_map<components::Footpath::Id, entt::entity> footpaths;
 	std::unordered_map<components::Stream::Id, entt::entity> streams;
 	std::unordered_map<uint32_t, entt::entity> towns;
+	/// Index of the currently loaded land, set by the SET_LAND_NUMBER script command.
+	uint32_t landNumber = 0;
 };
 } // namespace openblack::ecs

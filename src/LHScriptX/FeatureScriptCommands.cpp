@@ -280,8 +280,16 @@ void FeatureScriptCommands::SetTownBeliefCap(int32_t townId, const std::string& 
 
 void FeatureScriptCommands::SetTownUninhabitable(int32_t townId)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}) not implemented.", __FILE__, __LINE__,
-	                    __func__, townId);
+	auto& registry = Locator::entitiesRegistry::value();
+	auto& registryContext = registry.Context();
+
+	const auto townIt = registryContext.towns.find(static_cast<uint32_t>(townId));
+	if (townIt == registryContext.towns.cend())
+	{
+		SPDLOG_LOGGER_WARN(spdlog::get("scripting"), "LHScriptX: SetTownUninhabitable: unknown town {}.", townId);
+		return;
+	}
+	registry.Get<Town>(townIt->second).uninhabitable = true;
 }
 
 void FeatureScriptCommands::SetTownCongregationPos(int32_t townId, glm::vec3 position)
@@ -775,8 +783,8 @@ void FeatureScriptCommands::CreateStreetLight([[maybe_unused]] glm::vec3 positio
 
 void FeatureScriptCommands::SetLandNumber(int32_t number)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}) not implemented.", __FILE__, __LINE__,
-	                    __func__, number);
+	auto& registry = Locator::entitiesRegistry::value();
+	registry.Context().landNumber = static_cast<uint32_t>(number);
 }
 
 void FeatureScriptCommands::CreateOneShotSpell([[maybe_unused]] glm::vec3 position, const std::string&)
