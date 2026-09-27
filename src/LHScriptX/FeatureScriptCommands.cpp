@@ -297,9 +297,8 @@ void FeatureScriptCommands::CreateAbode(int32_t townId, glm::vec3 position, cons
 void FeatureScriptCommands::CreatePlannedAbode(int32_t townId, glm::vec3 position, const std::string& abodeInfo,
                                                int32_t rotation, int32_t size, int32_t foodAmount, int32_t woodAmount)
 {
-	SPDLOG_LOGGER_ERROR(spdlog::get("scripting"), "LHScriptX: {}:{}: Function {}({}, {}, {}, {}, {}, {}, {}) not implemented.",
-	                    __FILE__, __LINE__, __func__, townId, glm::to_string(position), abodeInfo, rotation, size, foodAmount,
-	                    woodAmount);
+	AbodeArchetype::Create(townId, position, GAbodeInfo::Find(abodeInfo), rotation * 0.001f, size * 0.001f,
+	                       static_cast<uint32_t>(foodAmount), static_cast<uint32_t>(woodAmount));
 }
 
 void FeatureScriptCommands::CreateTownCentre(int32_t townId, glm::vec3 position, const std::string& abodeInfo, int32_t rotation,
