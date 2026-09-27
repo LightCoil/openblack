@@ -45,3 +45,7 @@ openblack.log
 screenshot.png
 compile_commands.json
 .cache
+
+# verify.ps1 output
+verify-out/
+
