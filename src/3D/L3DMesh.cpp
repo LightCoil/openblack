@@ -145,9 +145,20 @@ bool L3DMesh::Load(const l3d::L3DFile& l3d) noexcept
 	for (uint32_t i = 0; i < submeshCount; ++i)
 	{
 		auto subMesh = std::make_unique<L3DSubMesh>(*this);
+		// An empty submesh is valid data: some meshes reserve slots that carry no
+		// geometry. L3DSubMesh::Load rejects those, so skip them quietly instead
+		// of reporting a load failure for a file that is perfectly intact.
+		const auto& vertexSpan = l3d.GetVertexSpan(i);
+		const auto& indexSpan = l3d.GetIndexSpan(i);
+		if (vertexSpan.empty() || indexSpan.empty())
+		{
+			SPDLOG_LOGGER_DEBUG(spdlog::get("game"), "Skipping empty submesh {}/{} of '{}'", i, submeshCount, GetDebugName());
+			continue;
+		}
 		if (!subMesh->Load(l3d, i))
 		{
-			SPDLOG_LOGGER_ERROR(spdlog::get("game"), "Failed to open L3DSubMesh");
+			SPDLOG_LOGGER_ERROR(spdlog::get("game"), "Failed to open L3DSubMesh of '{}' (submesh {}/{})", GetDebugName(), i,
+			                    submeshCount);
 			result = false;
 			continue;
 		}

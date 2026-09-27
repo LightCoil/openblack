@@ -768,7 +768,10 @@ bool Game::Initialize() noexcept
 			}
 			catch (std::runtime_error& err)
 			{
-				SPDLOG_LOGGER_ERROR(spdlog::get("game"), "{}", err.what());
+				// Name the file and its size: .raw textures carry no header, so the
+				// loader cannot infer the dimensions and says only "ambiguous".
+				SPDLOG_LOGGER_ERROR(spdlog::get("game"), "Skipping texture '{}' ({} bytes): {}", f.stem().string(),
+				                    std::filesystem::file_size(f), err.what());
 			}
 		}
 	});

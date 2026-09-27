@@ -70,16 +70,27 @@ entt::id_type creature::GetIdFromMeshName(const std::string& name)
 		appearance = appearanceFound->second;
 	}
 
-	// Remove the suffix and find the creature species
+	// Remove the suffix and find the creature species.
+	// Mesh names carry up to two trailing tokens after the species, for example
+	// "A_Greek_Boned_Base_Evil" is species "a_greek_boned" + body "base" +
+	// appearance "evil". Strip the appearance, then try progressively shorter
+	// prefixes so that the optional body token is handled without hardcoding
+	// every combination.
 	split.erase(split.begin() + split.size() - 1);
-	auto speciesFound = k_MeshNameToSpecies.find(fmt::format("{}", fmt::join(split, "_")));
-	if (speciesFound == k_MeshNameToSpecies.end())
+	while (!split.empty())
+	{
+		const auto speciesFound = k_MeshNameToSpecies.find(fmt::format("{}", fmt::join(split, "_")));
+		if (speciesFound != k_MeshNameToSpecies.end())
+		{
+			species = speciesFound->second;
+			break;
+		}
+		// Drop the next trailing token (the body variant) and retry.
+		split.erase(split.begin() + split.size() - 1);
+	}
+	if (species == S::Unknown)
 	{
 		SPDLOG_LOGGER_ERROR(spdlog::get("game"), "Unknown creature species: {}", name);
-	}
-	else
-	{
-		species = speciesFound->second;
 	}
 
 	return entt::hashed_string(
